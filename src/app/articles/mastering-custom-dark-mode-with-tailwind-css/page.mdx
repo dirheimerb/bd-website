@@ -1,0 +1,127 @@
+import { ArticleLayout } from '@/components/ArticleLayout';
+
+export const article = {
+  author: 'Bradley Dirheimer',
+  date: '2022-04-21',
+  title: 'Mastering Custom Dark Mode with Tailwind CSS: From Class to Selector Strategy',
+  description:
+    'One significant enhancement is Tailwind CSS’s transition from the ‘class’ strategy to the more flexible ‘selector’ strategy, which provides greater control over user experience. This blog post explores this transition, illustrating how to manually implement and manage dark mode using the latest capabilities of Tailwind CSS.',
+};
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+};
+
+export default (props) => <ArticleLayout article={article} {...props} />;
+
+> Implementing Custom Dark Mode with Tailwind CSS: A Complete Guide
+
+As the digital landscape evolves, the adoption of dark mode on websites has become increasingly important, offering users a more personalized and eye-friendly browsing experience. Tailwind CSS, a utility-first CSS framework, has continually updated its features to allow seamless integration of dark mode into web projects. One significant enhancement is Tailwind CSS’s transition from the ‘class’ strategy to the more flexible ‘selector’ strategy, which provides greater control over user experience. This blog post explores this transition, illustrating how to manually implement and manage dark mode using the latest capabilities of Tailwind CSS.
+
+## Understanding the Selector Strategy
+
+With the release of version 3.4.1, Tailwind CSS introduced the ‘selector’ strategy, replacing the older ‘class’ strategy. This new approach allows developers to activate dark mode by adding a specific class to a higher element in the HTML structure, such as the `<html>` tag, thus providing direct control over the dark mode, independent of the user’s system settings.
+
+## Configuring Tailwind CSS for Selector Strategy
+
+To use the selector strategy in your Tailwind CSS setup, you must update your `tailwind.config.js` file as follows:
+
+```js
+module.exports = {
+  darkMode: 'selector', // Enable selector strategy for dark mode
+  // Additional configuration...
+};
+```
+
+This configuration ensures that dark mode-specific classes such as `dark:bg-black` will activate whenever the `dark` class is present on the parent or a higher-level HTML element.
+
+## Example Usage
+
+Implementing the selector strategy in your HTML is straightforward:
+
+```html
+<!-- Dark mode not enabled -->
+<html>
+  <body>
+    <div class="bg-white dark:bg-black">
+      <!-- Content without dark mode -->
+    </div>
+  </body>
+</html>
+
+<!-- Dark mode enabled -->
+<html class="dark">
+  <body>
+    <div class="bg-white dark:bg-black">
+      <!-- Content with dark mode -->
+    </div>
+  </body>
+</html>
+```
+
+In this setup, the background of the `div` will be white by default and switch to black when the `dark` class is added to the `<html>` tag.
+
+## Dynamically Toggling Dark Mode with JavaScript
+
+To allow users to control the appearance of your application, you can use JavaScript to dynamically toggle dark mode based on their preferences. This can be effectively managed using `localStorage` to remember user settings:
+
+```js
+// Check and apply the user's stored preference or the system preference on page load
+if (
+  localStorage.theme === 'dark' ||
+  (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+) {
+  document.documentElement.classList.add('dark');
+} else {
+  document.documentElement.classList.remove('dark');
+}
+
+// User actions to explicitly choose themes
+function toggleTheme(isDark) {
+  localStorage.theme = isDark ? 'dark' : 'light'; // Save preference
+  document.documentElement.classList.toggle('dark', isDark);
+}
+```
+
+This function checks the user’s preference stored in `localStorage` or defaults to the system preference, adding or removing the `dark` class on the `<html>` element accordingly.
+
+## Customizing the Selector
+
+For projects requiring a unique class name for toggling dark mode or integrating with other frameworks, Tailwind CSS allows for customization of the dark mode selector:
+
+```js
+/** @type {import(‘tailwindcss’).Config} */
+
+export default {
+    content: [],
+    darkMode: [‘selector’, ‘[data-mode=”dark”]’],
+    theme: {
+      extend: {},
+  },
+    plugins: [],
+  }
+
+}
+```
+
+Or with typescript
+
+```ts
+import type { Config } from ‘tailwindcss’
+
+export default {
+  content: [],
+  darkMode: [‘selector’, ‘[data-mode=”dark”]’],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+} satisfies Config
+```
+
+This configuration ensures that your custom selector is wrapped in the `:where()` pseudo-class to maintain consistency in specificity.
+
+## Conclusion
+
+Tailwind CSS’s selector strategy for dark mode provides a flexible and powerful approach to implementing custom dark mode toggling in web projects. It equips developers with the tools to create dynamic, user-centric web applications that cater to individual preferences, enhancing the overall user experience. Whether you’re developing a new website or updating an existing one, integrating Tailwind CSS’s dark mode features can significantly enhance your project’s accessibility and aesthetic appeal.
