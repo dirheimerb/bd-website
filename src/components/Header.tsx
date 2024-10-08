@@ -109,7 +109,7 @@ function MobileNavigation(props: React.ComponentPropsWithoutRef<typeof Popover>)
             <MobileNavItem href="/about">About</MobileNavItem>
             <MobileNavItem href="/articles">Articles</MobileNavItem>
             <MobileNavItem href="/projects">Projects</MobileNavItem>
-            <MobileNavItem href="/speaking">Speaking</MobileNavItem>
+            {/* <MobileNavItem href="/speaking">Speaking</MobileNavItem> */}
             <MobileNavItem href="/uses">Uses</MobileNavItem>
           </ul>
         </nav>

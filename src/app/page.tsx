@@ -287,10 +287,9 @@ export default async function Home() {
             optimize their processes and customer experiences through technology.
           </p>
           <div className="mt-6 flex gap-6">
-            <SocialLink href="#" aria-label="Follow on X" icon={XIcon} />
-            <SocialLink href="#" aria-label="Follow on Instagram" icon={InstagramIcon} />
-            <SocialLink href="#" aria-label="Follow on GitHub" icon={GitHubIcon} />
-            <SocialLink href="#" aria-label="Follow on LinkedIn" icon={LinkedInIcon} />
+            <SocialLink href="https://twitter.com/brd513" aria-label="Follow on X" icon={XIcon} />
+            <SocialLink href="https://github.com/dirheimerb" aria-label="Follow on GitHub" icon={GitHubIcon} />
+            <SocialLink href="https://www.linkedin.com/in/bradley-dirheimer-88465b181" aria-label="Follow on LinkedIn" icon={LinkedInIcon} />
           </div>
         </div>
       </Container>
