@@ -1,0 +1,146 @@
+import { ArticleLayout } from '@/components/ArticleLayout';
+
+export const article = {
+  author: 'Bradley Dirheimer',
+  date: '2024-04-16',
+  title: 'Understanding the use API in React',
+  description:
+    'Currently available only in React's Canary and experimental channels, use aims to simplify the handling of Promises and contexts by integrating with Suspense and error boundaries.',
+};
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+};
+
+export default (props) => <ArticleLayout article={article} {...props} />;
+
+
+# Understanding the use API in React
+
+
+![Photo by Lautaro Andreani on Unsplash](/public/react.webp)
+
+React continues to evolve, and one of the newest and most exciting features is the experimental use API, which allows developers to manage asynchronous resources and context more efficiently. Currently available only in React's Canary and experimental channels, use aims to simplify the handling of Promises and contexts by integrating with Suspense and error boundaries.
+
+This blog post will explore what the use API is, how it works, and the various scenarios where it shines. We’ll also cover common pitfalls, how to handle errors, and why this feature is a game changer in modern React development.
+
+What is use?
+In a nutshell, use is a React API that lets you read the value of a resource like a Promise or context. Unlike existing hooks like useContext, the use API offers more flexibility and can be used inside loops or conditionals.
+
+```tsx
+import { use } from 'react';
+function MessageComponent({ messagePromise }) {
+ const message = use(messagePromise);
+ const theme = use(ThemeContext);
+ // Render the component using the fetched data
+}
+```
+
+With the use API, you can seamlessly work with asynchronous resources, allowing your components to "suspend" their rendering until a Promise is resolved. This makes it an ideal candidate for use with Suspense boundaries, which we’ll explore in more detail below.
+
+## Key Features of use
+
+Flexibility: Unlike hooks like useContext, the use API can be called within conditionals and loops. This makes it more versatile for various use cases.
+Integration with Suspense: When a Promise is passed to use, the component "suspends" rendering until the Promise resolves. If the component is wrapped in a Suspense boundary, the fallback UI will be displayed while waiting for the data to load.
+Error Handling: If a Promise passed to use is rejected, the closest error boundary will display its fallback.
+
+## Usage of use
+
+1. Reading Context with use
+The use API can read context, much like useContext, but with more flexibility. You can call use conditionally inside components, allowing for more dynamic logic.
+
+```tsx
+import { use } from 'react';
+
+function Button() {
+  const theme = use(ThemeContext);
+  return <button className={`button-${theme}`}>Click me</button>;
+}
+```
+
+Unlike useContext, which must be called at the top level of a component, use allows you to call context conditionally.
+
+```tsx
+function HorizontalRule({ show }) {
+  if (show) {
+    const theme = use(ThemeContext);
+    return <hr className={theme} />;
+  }
+  return null;
+}
+```
+
+This code showcases how use works well in conditionals, making it easier to handle context dynamically.
+
+2. Streaming Data from Server to Client
+You can use use to stream data from the server to the client by passing a Promise from a Server Component to a Client Component. This is ideal for fetching data that might not be available immediately.
+
+```tsx
+import { fetchMessage } from './lib.js';
+
+function App() {
+  const messagePromise = fetchMessage();
+  return (
+    <Suspense fallback={<p>waiting for message...</p>}>
+      <MessageComponent messagePromise={messagePromise} />
+    </Suspense>
+  );
+}
+```
+In the Client Component:
+
+```tsx
+'use client';
+
+import { use } from 'react';
+
+function MessageComponent({ messagePromise }) {
+  const message = use(messagePromise);
+  return <p>{message}</p>;
+}
+```
+
+When messagePromise is passed, the Suspense boundary displays the fallback while the Promise resolves. Once resolved, the data is passed to the component.
+
+3. Handling Rejected Promises
+When a Promise is rejected, you can handle the error gracefully using use. There are two main approaches:
+
+Using an Error Boundary: Wrapping the component in an Error Boundary ensures the fallback is displayed when the Promise fails.
+
+```tsx
+import { ErrorBoundary } from 'react-error-boundary';
+
+function MessageContainer({ messagePromise }) {
+  return (
+    <ErrorBoundary fallback={<p>⚠️ Something went wrong</p>}>
+      <Suspense fallback={<p>⌛ Downloading message...</p>}>
+        <Message messagePromise={messagePromise} />
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+```
+
+Providing an Alternative Value: You can use the catch method on the Promise to provide a fallback value in case of rejection.
+
+```tsx
+const messagePromise = new Promise((_, reject) => reject()).catch(() => {
+  return 'No new message found';
+});
+```
+
+## Troubleshooting Common Issues
+
+![Photo by Bermix Studio on Unsplash](/public/phone-doctor.webp "Photo by Bermix Studio on Unsplash")
+
+1. “Suspense Exception: This is not a real error!”
+This error usually occurs when you call use outside of a React Component or Hook function. Ensure that use is called inside a component or Hook and not within closures or try-catch blocks.
+
+2. Avoid Calling use in Try-Catch Blocks
+You cannot call use in a try-catch block. If error handling is required, wrap the component in an Error Boundary or handle the Promise rejection via the catch method.
+
+Conclusion
+The use API in React's Canary release is a significant leap forward in handling asynchronous resources and context in a more flexible and powerful way. By integrating seamlessly with Suspense and error boundaries, use allows for smoother data fetching, error handling, and dynamic component rendering.
+
+With more flexibility in conditionals and loops, use overcomes some of the limitations of hooks like useContext, making it an essential tool for modern React developers. As this API continues to evolve, it’s an exciting time to experiment with it and see how it can improve your component logic.
